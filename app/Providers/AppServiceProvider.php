@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Force QR Code to use GD backend instead of Imagick
+        if (class_exists('\SimpleSoftwareIO\QrCode\Facades\QrCode')) {
+            config(['simple-qrcode.backend' => 'gd']);
+        }
     }
 }

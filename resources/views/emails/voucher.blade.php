@@ -14,8 +14,8 @@
     <p>Tunjukkan QR Code di bawah ini kepada tim merchandise untuk menukarkannya.</p>
 
     <div style="margin: 30px 0;">
-        <img 
-            src="{{ $qrCodeBase64 }}" 
+        <img
+            src="{{ $qrCodeBase64 }}"
             alt="QR Code Voucher"
             style="width: 200px; height: 200px;"
         >
