@@ -451,7 +451,7 @@ extension=gd
 
 ## 📝 **LICENSE**
 
-MIT License - Free to use and modify
+Danendra Farrel Adriansyah
 
 ---
 
