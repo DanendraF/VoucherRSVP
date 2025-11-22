@@ -51,14 +51,19 @@ class GenerateVoucherJob implements ShouldQueue
                 'status' => 'unused',
             ]);
 
-            // 4. Generate voucher link
+            // 4. Generate QR Code
+            $qrcode = new \chillerlan\QRCode\QRCode();
+            $qrCodeBase64 = $qrcode->render($voucher->code);
+
+            // 5. Generate voucher link
             $voucherLink = route('voucher.show', ['code' => $voucher->code]);
 
-            // 5. Kirim email dengan link (bukan QR code)
+            // 6. Kirim email dengan QR code dan link
             Mail::to($this->guest->email)->send(new VoucherNotification(
                 $this->guest,
                 $voucher->code,
-                $voucherLink
+                $voucherLink,
+                $qrCodeBase64
             ));
 
             // 6. Kirim WA menggunakan WAHA dengan link

@@ -149,10 +149,20 @@
                 </div>
             </div>
 
+            <!-- QR Code -->
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="background: white; display: inline-block; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="{{ $qrCodeBase64 }}" alt="QR Code Voucher" style="width: 200px; height: 200px; display: block;">
+                </div>
+                <p style="margin-top: 15px; color: #666; font-size: 14px;">
+                    Scan QR Code ini atau klik tombol di bawah
+                </p>
+            </div>
+
             <!-- CTA Button -->
             <div style="text-align: center;">
                 <a href="{{ $voucherLink }}" class="cta-button">
-                    📱 Lihat Voucher & QR Code
+                    📱 Lihat Halaman Voucher
                 </a>
             </div>
 
@@ -160,12 +170,12 @@
             <div class="instructions">
                 <h3>📋 Cara Menggunakan Voucher:</h3>
                 <ol>
-                    <li>Klik tombol di atas untuk membuka halaman voucher Anda</li>
-                    <li>Tunjukkan QR Code di halaman tersebut ke tim merchandise</li>
+                    <li>Tunjukkan QR Code di atas ke tim merchandise</li>
+                    <li>Atau buka halaman voucher dengan klik tombol di atas</li>
                     <li>Dapatkan diskon 10% untuk pembelian Anda!</li>
                 </ol>
                 <p style="margin-top: 15px; color: #667eea; font-weight: 600;">
-                    💡 Simpan email ini atau screenshot halaman voucher untuk digunakan nanti
+                    💡 Simpan email ini atau screenshot QR Code untuk digunakan nanti
                 </p>
             </div>
 

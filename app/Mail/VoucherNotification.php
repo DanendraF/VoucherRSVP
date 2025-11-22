@@ -14,12 +14,14 @@ class VoucherNotification extends Mailable
     public $guest;
     public $voucherCode;
     public $voucherLink;
+    public $qrCodeBase64;
 
-    public function __construct(Guest $guest, string $voucherCode, string $voucherLink)
+    public function __construct(Guest $guest, string $voucherCode, string $voucherLink, string $qrCodeBase64)
     {
         $this->guest = $guest;
         $this->voucherCode = $voucherCode;
         $this->voucherLink = $voucherLink;
+        $this->qrCodeBase64 = $qrCodeBase64;
     }
 
     public function build()
