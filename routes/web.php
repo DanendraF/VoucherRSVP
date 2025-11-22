@@ -27,6 +27,11 @@ Route::get('/rsvp', [RsvpController::class, 'index'])->name('rsvp.index');
 Route::post('/rsvp', [RsvpController::class, 'store'])->name('rsvp.store');
 
 // =========================
+// ROUTE VOUCHER VIEW (PUBLIC)
+// =========================
+Route::get('/voucher/{code}', [RsvpController::class, 'showVoucher'])->name('voucher.show');
+
+// =========================
 // ROUTE DASHBOARD (LOGIN)
 // =========================
 Route::get('/dashboard', function () {

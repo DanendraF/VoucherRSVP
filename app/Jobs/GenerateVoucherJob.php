@@ -51,22 +51,18 @@ class GenerateVoucherJob implements ShouldQueue
                 'status' => 'unused',
             ]);
 
-            // 4. Generate QR Code using chillerlan/php-qrcode (PNG, no Imagick needed)
-            try {
-                // Generate QR Code
-                $qrcode = new \chillerlan\QRCode\QRCode();
-                $qrCodeBase64 = $qrcode->render($voucher->code);
-            } catch (\Exception $e) {
-                Log::error("QR Code generation error: " . $e->getMessage());
-                // Fallback: empty image
-                $qrCodeBase64 = '';
-            }
+            // 4. Generate voucher link
+            $voucherLink = route('voucher.show', ['code' => $voucher->code]);
 
-            // 5. Kirim email
-            Mail::to($this->guest->email)->send(new VoucherNotification($this->guest, $qrCodeBase64));
+            // 5. Kirim email dengan link (bukan QR code)
+            Mail::to($this->guest->email)->send(new VoucherNotification(
+                $this->guest,
+                $voucher->code,
+                $voucherLink
+            ));
 
-            // 6. Kirim WA menggunakan WAHA
-            $this->sendWhatsApp($this->guest, $qrCodeBase64);
+            // 6. Kirim WA menggunakan WAHA dengan link
+            $this->sendWhatsApp($this->guest, $voucherLink, $voucher->code);
 
             Log::info("Voucher {$code} berhasil dibuat untuk {$this->guest->email}.");
         } catch (\Exception $e) {
@@ -77,7 +73,7 @@ class GenerateVoucherJob implements ShouldQueue
     /**
      * Helper function untuk mengirim WhatsApp via WAHA.
      */
-    protected function sendWhatsApp(Guest $guest, string $qrCodeBase64)
+    protected function sendWhatsApp(Guest $guest, string $voucherLink, string $voucherCode)
     {
         // Ambil konfigurasi dari config/services.php
         $baseUrl = config('services.waha.base_url');
@@ -95,11 +91,17 @@ class GenerateVoucherJob implements ShouldQueue
             $phone = substr($phone, 1);
         }
 
-        // Pesan teks
-        $caption = "Halo {$guest->name}, terima kasih telah RSVP. Ini adalah voucher diskon 10% Anda. Tunjukkan QR Code ini kepada tim merchandise.";
+        // Pesan teks dengan link
+        $message = "🎉 *Halo {$guest->name}!*\n\n";
+        $message .= "Terima kasih telah melakukan RSVP untuk pernikahan kami! 💒\n\n";
+        $message .= "Sebagai ucapan terima kasih, kami berikan voucher diskon *10%* untuk merchandise pernikahan.\n\n";
+        $message .= "📱 *Kode Voucher:* `{$voucherCode}`\n\n";
+        $message .= "Klik link di bawah untuk melihat QR Code voucher Anda:\n";
+        $message .= "👉 {$voucherLink}\n\n";
+        $message .= "Tunjukkan QR Code kepada tim merchandise untuk mendapatkan diskon.\n\n";
+        $message .= "Sampai jumpa di hari H! 🎊";
 
-        // Endpoint WAHA untuk mengirim pesan dengan media (base64)
-        // Referensi: https://waha.devlike.pro/docs/http-api/sending/media
+        // Endpoint WAHA untuk mengirim pesan teks
         $endpoint = "{$baseUrl}/api/sessions/{$session}/messages";
 
         try {
@@ -116,10 +118,7 @@ class GenerateVoucherJob implements ShouldQueue
             $response = Http::withHeaders($headers)
                 ->post($endpoint, [
                     'chatId' => "{$phone}@c.us", // Format @c.us untuk nomor pribadi
-                    'media' => $qrCodeBase64, // Kirim data base64
-                    'caption' => $caption,
-                    'mimetype' => 'image/png', // Opsional tapi disarankan
-                    'filename' => 'voucher-qr.png' // Opsional
+                    'text' => $message,
                 ]);
 
             if ($response->successful()) {
